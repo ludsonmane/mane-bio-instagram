@@ -7,5 +7,9 @@
     "reservas": "https://reservas.mane.com.vc",
     "restaurantes": "https://menu.mane.com.vc/#/restaurantes/home",
     "localizacao": "https://maps.google.com/?q=Mané%20Águas%20Claras"
+  },
+  "pixel": {
+    "metaId": "1160688802149033",
+    "noscriptImg": "https://www.facebook.com/tr?id=1160688802149033&ev=PageView&noscript=1"
   }
 }

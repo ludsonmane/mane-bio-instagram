@@ -29,6 +29,11 @@ declare global {
 //     "reservas": "https://reservas.mane.com.vc",
 //     "restaurantes": "https://menu.mane.com.vc/#/restaurantes/home",
 //     "localizacao": "https://maps.google.com/?q=Mané%20Águas%20Claras"
+//   },
+//   "pixel": {
+//     "metaId": "1160688802149033",
+//     "noscriptImg": "https://www.facebook.com/tr?id=1160688802149033&ev=PageView&noscript=1"
+//     // OU use "code": "<script JS do pixel por cidade>"
 //   }
 // }
 
@@ -41,6 +46,11 @@ type BioConfig = {
     reservas: string;
     restaurantes: string;
     localizacao: string;
+  };
+  pixel?: {
+    metaId?: string;      // carrega fbevents.js e dispara PageView
+    code?: string;        // injeta JS bruto (se preferir por cidade)
+    noscriptImg?: string; // URL do <noscript><img /></noscript>
   };
 };
 
@@ -55,6 +65,10 @@ const DEFAULTS: Record<string, BioConfig> = {
       restaurantes: "https://menu.mane.com.vc/#/restaurantes/home",
       localizacao: "https://maps.google.com/?q=Mané%20Águas%20Claras",
     },
+    pixel: {
+      metaId: "1160688802149033",
+      noscriptImg: "https://www.facebook.com/tr?id=1160688802149033&ev=PageView&noscript=1",
+    },
   },
   sp: {
     logoUrl: "https://mane.com.vc/wp-content/uploads/2023/03/Camada-1.svg",
@@ -66,6 +80,7 @@ const DEFAULTS: Record<string, BioConfig> = {
       restaurantes: "#",
       localizacao: "https://maps.google.com/?q=Mané%20São%20Paulo",
     },
+    pixel: {},
   },
   bsb: {
     logoUrl: "https://mane.com.vc/wp-content/uploads/2023/03/Camada-1.svg",
@@ -77,6 +92,7 @@ const DEFAULTS: Record<string, BioConfig> = {
       restaurantes: "#",
       localizacao: "https://maps.google.com/?q=Mané%20Brasília",
     },
+    pixel: {},
   },
 };
 
@@ -94,7 +110,7 @@ function useConfig(city: string) {
         // mantém defaults em caso de erro
       }
     })();
-  return () => { active = false; };
+    return () => { active = false; };
   }, [city]);
   return cfg;
 }
@@ -169,32 +185,37 @@ const Card = ({
 function ManeBio({ city }: { city: string }) {
   const cfg = useConfig(city);
   if (!cfg) return null;
-  // Meta Pixel (PageView)
+
+  // Pixel dinâmico por JSON
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
-    const w = window as any;
+    const p = cfg.pixel;
+    if (!p) return;
 
-    const ensureFbq = () => {
-      if (typeof w.fbq === 'function') return;
-      w.fbq = function (...args: any[]) {
-        (w.fbq.q = w.fbq.q || []).push(args);
-      };
-      w._fbq = w.fbq;
-      w.fbq.push = w.fbq;
-      w.fbq.loaded = true;
-      w.fbq.version = '2.0';
-      w.fbq.queue = [];
-
+    // 1) Injetar código bruto, se existir
+    if (p.code) {
       const s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      s.type = 'text/javascript';
+      s.defer = true;
+      s.text = p.code;
       document.head.appendChild(s);
-    };
+      return () => { document.head.removeChild(s); };
+    }
 
-    ensureFbq();
-    w.fbq('init', '1160688802149033');
-    w.fbq('track', 'PageView');
-  }, []);
+    // 2) Fallback: Meta Pixel por ID
+    if (p.metaId) {
+      const w = window as any;
+      if (typeof w.fbq !== 'function') {
+        w.fbq = function (...args: any[]) { (w.fbq.q = w.fbq.q || []).push(args); };
+        w._fbq = w.fbq; w.fbq.push = w.fbq; w.fbq.loaded = true; w.fbq.version = '2.0'; w.fbq.queue = [];
+        const s = document.createElement('script'); s.async = true; s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+        document.head.appendChild(s);
+      }
+      w.fbq('init', p.metaId);
+      w.fbq('track', 'PageView');
+    }
+  }, [cfg.pixel]);
+
   return (
     <div className="min-h-[100dvh] bg-[#FBF5E9] text-slate-900 flex flex-col" style={{ fontFamily: "'Merriweather', serif" }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap');`}</style>
@@ -263,7 +284,14 @@ function ManeBio({ city }: { city: string }) {
           </div>
         </div>
       </main>
-      <div dangerouslySetInnerHTML={{ __html: `<noscript><img height=\"1\" width=\"1\" style=\"display:none\" src=\"https://www.facebook.com/tr?id=1160688802149033&ev=PageView&noscript=1\" /></noscript>` }} />
+
+      {cfg.pixel?.noscriptImg ? (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<noscript><img height="1" width="1" style="display:none" src="${cfg.pixel.noscriptImg}" /></noscript>`,
+          }}
+        />
+      ) : null}
     </div>
   );
 }

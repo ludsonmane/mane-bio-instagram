@@ -7,5 +7,9 @@
     "reservas": "https://reservas.mane.com.vc",
     "restaurantes": "https://mane.com.vc/restaurantes/",
     "localizacao": "https://maps.google.com/?q=Mane+complexo+Gastronômico/"
+  },
+  "pixel": {
+    "metaId": "1160688802149033",
+    "noscriptImg": "https://www.facebook.com/tr?id=1160688802149033&ev=PageView&noscript=1"
   }
 }
