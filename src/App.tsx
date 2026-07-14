@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { UtensilsCrossed, CalendarDays, Store, MapPin, Instagram, Phone } from "lucide-react";
+import { UtensilsCrossed, CalendarDays, Store, MapPin, Instagram, Phone, Snowflake } from "lucide-react";
 
 declare global {
   interface Window {
@@ -46,6 +46,7 @@ type BioConfig = {
     reservas: string;
     restaurantes: string;
     localizacao: string;
+    festival?: string;
   };
   pixel?: {
     metaId?: string;      // carrega fbevents.js e dispara PageView
@@ -244,6 +245,18 @@ function ManeBio({ city }: { city: string }) {
       {/* Conteúdo */}
       <main className="flex-1">
         <div className="max-w-md mx-auto px-4 pt-6 pb-12 space-y-5">
+          {cfg.links.festival ? (
+            <Card
+              color="#355C7D"
+              title="festival de inverno"
+              textColor="#FFFFFF"
+              commaColor={COLORS.yellow}
+              Icon={Snowflake}
+              href={cfg.links.festival}
+              accent={COLORS.aqua}
+            />
+          ) : null}
+
           <Card
             color={COLORS.terracotta}
             title="cardápio"
