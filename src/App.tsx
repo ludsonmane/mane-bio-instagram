@@ -21,7 +21,7 @@ declare global {
 // Config carregada via JSON por rota (/ac, /sp, /bsb). Ao salvar o arquivo JSON, o site reflete a mudança.
 // Exemplo de arquivo: /config/ac.json
 // {
-//   "logoUrl": "https://mane.com.vc/wp-content/uploads/2023/03/Camada-1.svg",
+//   "logoUrl": "https://mane.com.vc/images/logo-mane.svg",
 //   "instagram": "https://www.instagram.com/maneaguasclaras/",
 //   "phone": "tel:+5561991264768",
 //   "links": {
@@ -57,7 +57,7 @@ type BioConfig = {
 
 const DEFAULTS: Record<string, BioConfig> = {
   ac: {
-    logoUrl: "https://mane.com.vc/wp-content/uploads/2023/03/Camada-1.svg",
+    logoUrl: "https://mane.com.vc/images/logo-mane.svg",
     instagram: "https://www.instagram.com/maneaguasclaras/",
     phone: "tel:+5561991264768",
     links: {
@@ -72,7 +72,7 @@ const DEFAULTS: Record<string, BioConfig> = {
     },
   },
   sp: {
-    logoUrl: "https://mane.com.vc/wp-content/uploads/2023/03/Camada-1.svg",
+    logoUrl: "https://mane.com.vc/images/logo-mane.svg",
     instagram: "",
     phone: "",
     links: {
@@ -84,7 +84,7 @@ const DEFAULTS: Record<string, BioConfig> = {
     pixel: {},
   },
   bsb: {
-    logoUrl: "https://mane.com.vc/wp-content/uploads/2023/03/Camada-1.svg",
+    logoUrl: "https://mane.com.vc/images/logo-mane.svg",
     instagram: "",
     phone: "",
     links: {
